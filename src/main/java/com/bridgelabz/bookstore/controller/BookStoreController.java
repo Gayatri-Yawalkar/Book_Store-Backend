@@ -45,6 +45,16 @@ public class BookStoreController {
 		return responseDto;
 	}
 
+	@PostMapping("/forgot-password")
+	public String forgotPassword(@RequestBody ForgotPasswordDto passwordDto) {
+		User userByEmailId = bookStoreService.getUserByEmailId(passwordDto.getEmailId());
+		if(userByEmailId != null) {
+			mailService.sendNotification(userByEmailId.getEmailId());
+			return null;
+		} else {
+			return "Password Reset Link has been sent to your Email.";
+		}
+	}
 	@PutMapping("/resetpassword/{token}")
 	public UserResponseDto resetPassword(@RequestBody ResetPasswordDto resetPasswordDto,
 			@PathVariable("token") String token) {
