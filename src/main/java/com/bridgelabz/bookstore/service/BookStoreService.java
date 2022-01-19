@@ -33,5 +33,15 @@ public class BookStoreService implements IBookStoreService {
 		User user = dtoToEntityConverter.convertDtoToEntity(userDto);
 		return bookStoreRepository.save(user);
 	}
+	
+	public User getUserByEmailId(String emailId) {
+		User user = bookStoreRepository.findByEmailId(emailId);
+		if(user != null) {
+			return user;
+		}
+		return null;
+	}
+	
+	
 
 }
