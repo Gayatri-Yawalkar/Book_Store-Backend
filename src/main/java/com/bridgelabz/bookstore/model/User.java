@@ -10,7 +10,7 @@ import javax.persistence.UniqueConstraint;
 import lombok.Data;
 @Data
 @Entity
-@Table(name="book_store_db", uniqueConstraints = @UniqueConstraint(columnNames = "emailId"))
+@Table(name="book_store_db", uniqueConstraints = @UniqueConstraint(columnNames = "email_id"))
 public class User {
 	
 

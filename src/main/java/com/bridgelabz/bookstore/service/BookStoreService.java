@@ -10,7 +10,7 @@ import com.bridgelabz.bookstore.dto.UserDto;
 import com.bridgelabz.bookstore.exception.BookStoreException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repository.UserRepository;
-import com.bridgelabz.bookstore.utilis.TokenUtil;
+import com.bridgelabz.bookstore.utilis.JwtUtil;
 
 @Service
 public class BookStoreService implements IBookStoreService {
@@ -19,6 +19,9 @@ public class BookStoreService implements IBookStoreService {
 	private UserRepository userRepository;
 	@Autowired
 	private Converter converter;
+
+	@Autowired
+	private JwtUtil jwt;
 
 	@Override
 	public User checkEmailIdAndPassword(LoginDto loginDto) {
@@ -38,16 +41,26 @@ public class BookStoreService implements IBookStoreService {
 
 	@Override
 	public User postUserData(UserDto userDto) {
-		User user = converter.convertDtoToEntity(userDto);
-		return userRepository.save(user);
+		User userByEmailId = userRepository.findByEmailId(userDto.getEmailId());
+		if (userByEmailId != null) {
+			throw new BookStoreException("Email Id already registered, Use Different Email Id.");
+		} else {
+			User user = converter.convertDtoToEntity(userDto);
+			return userRepository.save(user);
+		}
 	}
 
 	@Override
 	public User resetUserPassword(ResetPasswordDto password, String token) throws BookStoreException {
-		Integer id = TokenUtil.decodeToken(token);
-		User user = userRepository.findById(id).orElseThrow(() -> new BookStoreException("User not found "));
-		user.setPassword(password.getConfirmPassword());
-		return userRepository.save(user);
+		String email = jwt.getSubject(token);
+		User userByEmailId = userRepository.findByEmailId(email);
+		if (userByEmailId != null) {
+			userByEmailId.setPassword(password.getConfirmPassword());
+			return userRepository.save(userByEmailId);
+		} else {
+			throw new BookStoreException(
+					"Something went wrong while changing your password, Please try again after some time.");
+		}
 	}
 
 	public User getUserByEmailId(String emailId) {

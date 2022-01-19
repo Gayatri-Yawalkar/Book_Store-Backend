@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.converter.Converter;
+import com.bridgelabz.bookstore.dto.ForgotPasswordDto;
 import com.bridgelabz.bookstore.dto.LoginDto;
 import com.bridgelabz.bookstore.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.dto.UserDto;
@@ -22,13 +23,14 @@ import com.bridgelabz.bookstore.service.MailService;
 @CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping("/bookstore")
 public class BookStoreController {
+	
 	@Autowired
 	private BookStoreService bookStoreService;
 	
 	@Autowired
 	private MailService mailService;
 	
-
+	@Autowired
 	private Converter converter;
 
 	@PostMapping("/login")
@@ -49,8 +51,8 @@ public class BookStoreController {
 	public String forgotPassword(@RequestBody ForgotPasswordDto passwordDto) {
 		User userByEmailId = bookStoreService.getUserByEmailId(passwordDto.getEmailId());
 		if(userByEmailId != null) {
-			mailService.sendNotification(userByEmailId.getEmailId());
-			return null;
+			mailService.sendNotification(userByEmailId.getEmailId(), userByEmailId.getUserId());
+			return "Password Reset Link has been sent to your Email.";
 		} else {
 			return "Password Reset Link has been sent to your Email.";
 		}
