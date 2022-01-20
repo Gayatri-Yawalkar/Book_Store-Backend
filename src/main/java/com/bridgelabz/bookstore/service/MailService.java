@@ -22,7 +22,7 @@ public class MailService {
 		simpleMailMessage.setFrom("gpydevare@gmail.com");
 		simpleMailMessage.setSubject("Reset Password");
 		simpleMailMessage.setText("To reset your Password, please click here : "
-	            +"http://localhost:8080/bookstore/resetpassword/"+jwt.generateToken(""+id,toEmail));
+	            +"http://localhost:4200/reset/"+jwt.generateToken(""+id,toEmail));
 		javaMailSender.send(simpleMailMessage);
 	}
 }

@@ -20,7 +20,7 @@ import com.bridgelabz.bookstore.service.BookStoreService;
 import com.bridgelabz.bookstore.service.MailService;
 
 @RestController
-@CrossOrigin(allowedHeaders = "*", origins = "*")
+@CrossOrigin(originPatterns = "*")
 @RequestMapping("/bookstore")
 public class BookStoreController {
 	
@@ -34,7 +34,7 @@ public class BookStoreController {
 	private Converter converter;
 
 	@PostMapping("/login")
-	public UserResponseDto checkLoginCredentials(LoginDto loginDto) {
+	public UserResponseDto checkLoginCredentials(@RequestBody LoginDto loginDto) {
 		User user = bookStoreService.checkEmailIdAndPassword(loginDto);
 		UserResponseDto respDto = converter.convertUserToRespDto(user);
 		return respDto;
@@ -57,7 +57,7 @@ public class BookStoreController {
 			return "Password Reset Link has been sent to your Email.";
 		}
 	}
-	@PutMapping("/resetpassword/{token}")
+	@PostMapping("/resetpassword/{token}")
 	public UserResponseDto resetPassword(@RequestBody ResetPasswordDto resetPasswordDto,
 			@PathVariable("token") String token) {
 		User user = bookStoreService.resetUserPassword(resetPasswordDto, token);
