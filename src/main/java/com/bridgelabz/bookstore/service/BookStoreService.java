@@ -1,9 +1,9 @@
 package com.bridgelabz.bookstore.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.bookstore.converter.Converter;
@@ -25,6 +25,9 @@ public class BookStoreService implements IBookStoreService {
 
 	@Autowired
 	private JwtUtil jwt;
+	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 
 	@Override
 	public User checkEmailIdAndPassword(LoginDto loginDto) {
@@ -32,7 +35,7 @@ public class BookStoreService implements IBookStoreService {
 		String password = loginDto.getPassword();
 		User user = userRepository.findByEmailId(emailId);
 		if (user != null) {
-			if (user.getPassword().equals(password)) {
+			if (encoder.matches(password, user.getPassword())) {
 				return user;
 			} else {
 				throw new BookStoreException("Wrong Password");
@@ -52,7 +55,9 @@ public class BookStoreService implements IBookStoreService {
 			LocalDateTime createdAtTime=LocalDateTime.now();
 			User user = converter.convertDtoToEntity(userDto);
 			user.setCreatedAt(createdAtTime);
-			user.setUpdatedAt(createdAtTime);;
+			user.setUpdatedAt(createdAtTime);
+			String encodedPwd = encoder.encode(user.getPassword());
+			user.setPassword(encodedPwd);
 			return userRepository.save(user);
 		}
 	}
