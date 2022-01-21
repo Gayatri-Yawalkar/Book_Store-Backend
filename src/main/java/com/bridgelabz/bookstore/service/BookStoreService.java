@@ -1,5 +1,8 @@
 package com.bridgelabz.bookstore.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,10 +45,14 @@ public class BookStoreService implements IBookStoreService {
 	@Override
 	public User postUserData(UserDto userDto) {
 		User userByEmailId = userRepository.findByEmailId(userDto.getEmailId());
+		
 		if (userByEmailId != null) {
 			throw new BookStoreException("Email Id already registered, Use Different Email Id.");
 		} else {
+			LocalDateTime createdAtTime=LocalDateTime.now();
 			User user = converter.convertDtoToEntity(userDto);
+			user.setCreatedAt(createdAtTime);
+			user.setUpdatedAt(createdAtTime);;
 			return userRepository.save(user);
 		}
 	}
@@ -53,10 +60,12 @@ public class BookStoreService implements IBookStoreService {
 	@Override
 	public User resetUserPassword(ResetPasswordDto password, String token) throws BookStoreException {
 		String email = jwt.getSubject(token);
-		User userByEmailId = userRepository.findByEmailId(email);
-		if (userByEmailId != null) {
-			userByEmailId.setPassword(password.getConfirmPassword());
-			return userRepository.save(userByEmailId);
+		User user = userRepository.findByEmailId(email);
+		if (user != null) {
+			LocalDateTime updatedAtTime=LocalDateTime.now();
+			user.setPassword(password.getConfirmPassword());
+			user.setUpdatedAt(updatedAtTime);
+			return userRepository.save(user);
 		} else {
 			throw new BookStoreException(
 					"Something went wrong while changing your password, Please try again after some time.");
