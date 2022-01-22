@@ -20,17 +20,21 @@ public class BookStoreService implements IBookStoreService {
 
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private Converter converter;
 
 	@Autowired
 	private JwtUtil jwt;
-	
+
+	@Autowired
+	MailService mailService;
+
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 
 	@Override
-	public User checkEmailIdAndPassword(LoginDto loginDto) {
+	public User checkEmailIdAndPasswordForLogin(LoginDto loginDto) {
 		String emailId = loginDto.getEmail();
 		String password = loginDto.getPassword();
 		User user = userRepository.findByEmailId(emailId);
@@ -46,13 +50,13 @@ public class BookStoreService implements IBookStoreService {
 	}
 
 	@Override
-	public User postUserData(UserDto userDto) {
+	public User registerNewUser(UserDto userDto) {
 		User userByEmailId = userRepository.findByEmailId(userDto.getEmailId());
-		
+
 		if (userByEmailId != null) {
 			throw new BookStoreException("Email Id already registered, Use Different Email Id.");
 		} else {
-			LocalDateTime createdAtTime=LocalDateTime.now();
+			LocalDateTime createdAtTime = LocalDateTime.now();
 			User user = converter.convertDtoToEntity(userDto);
 			user.setCreatedAt(createdAtTime);
 			user.setUpdatedAt(createdAtTime);
@@ -62,13 +66,22 @@ public class BookStoreService implements IBookStoreService {
 		}
 	}
 
+	public String forgotPassword(User userByEmailId) {
+		if (userByEmailId != null) {
+			mailService.sendNotification(userByEmailId.getEmailId(), userByEmailId.getUserId());
+			return "Password Reset Link has been sent to your Email.";
+		} else {
+			return "Password Reset Link has been sent to your Email.";
+		}
+	}
+
 	@Override
 	public User resetUserPassword(ResetPasswordDto password, String token) throws BookStoreException {
-		String email = jwt.getSubject(token);
+		String email = jwt.getEmailFromToken(token);
 		User user = userRepository.findByEmailId(email);
 		if (user != null) {
-			LocalDateTime updatedAtTime=LocalDateTime.now();
-			user.setPassword(password.getConfirmPassword());
+			LocalDateTime updatedAtTime = LocalDateTime.now();
+			user.setPassword(encoder.encode(password.getConfirmPassword()));
 			user.setUpdatedAt(updatedAtTime);
 			return userRepository.save(user);
 		} else {

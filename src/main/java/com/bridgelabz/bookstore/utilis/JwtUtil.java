@@ -34,7 +34,7 @@ public class JwtUtil {
 		.getBody();
 	}
 	
-	public String getSubject(String token) {
+	public String getEmailFromToken(String token) {
 		return getClaims(token, key).getSubject();
 	}
 
