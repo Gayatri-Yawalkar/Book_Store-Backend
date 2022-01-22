@@ -17,6 +17,9 @@ import com.bridgelabz.bookstore.dto.UserResponseDto;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.service.BookStoreService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @CrossOrigin(originPatterns = "*")
 @RequestMapping("/bookstore")
@@ -30,13 +33,17 @@ public class BookStoreController {
 
 	@PostMapping("/login")
 	public UserResponseDto checkLoginCredentials(@RequestBody LoginDto loginDto) {
+		log.info("calling service layer method : checkEmailIdAndPasswordForLogin() with argument"+loginDto);
 		User user = bookStoreService.checkEmailIdAndPasswordForLogin(loginDto);
 		UserResponseDto respDto = converter.convertUserToRespDto(user);
+		log.info("credential checking done for the user and response is "+respDto);
 		return respDto;
+		
 	}
 
 	@PostMapping("/registration")
 	public UserResponseDto saveUserData(@RequestBody UserDto userDto) {
+		log.info("calling service layer method for registering user with arguments : "+userDto);
 		User savedUser = bookStoreService.registerNewUser(userDto);
 		UserResponseDto responseDto = converter.convertUserToRespDto(savedUser);
 		return responseDto;
@@ -44,12 +51,14 @@ public class BookStoreController {
 
 	@PostMapping("/forgot-password")
 	public String forgotPassword(@RequestBody ForgotPasswordDto passwordDto) {
+		log.info("calling service layer method for forgot password.");
 		User userByEmailId = bookStoreService.getUserByEmailId(passwordDto.getEmailId());
 		return bookStoreService.forgotPassword(userByEmailId);
 	}
 	@PostMapping("/resetpassword/{token}")
 	public UserResponseDto resetPassword(@RequestBody ResetPasswordDto resetPasswordDto,
 			@PathVariable("token") String token) {
+		log.info("calling service layer method for resetting user password.");
 		User user = bookStoreService.resetUserPassword(resetPasswordDto, token);
 		UserResponseDto respDto = converter.convertUserToRespDto(user);
 		return respDto;
