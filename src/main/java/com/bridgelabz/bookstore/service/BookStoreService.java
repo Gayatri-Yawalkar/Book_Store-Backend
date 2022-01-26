@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.bridgelabz.bookstore.converter.Converter;
 import com.bridgelabz.bookstore.dto.LoginDto;
 import com.bridgelabz.bookstore.dto.ResetPasswordDto;
+import com.bridgelabz.bookstore.dto.TokenDto;
 import com.bridgelabz.bookstore.dto.UserDto;
 import com.bridgelabz.bookstore.exception.BookStoreException;
 import com.bridgelabz.bookstore.model.User;
@@ -37,7 +38,7 @@ public class BookStoreService implements IBookStoreService {
 	private BCryptPasswordEncoder encoder;
 
 	@Override
-	public User checkEmailIdAndPasswordForLogin(LoginDto loginDto) {
+	public TokenDto checkEmailIdAndPasswordForLogin(LoginDto loginDto) {
 		String emailId = loginDto.getEmail();
 		String password = loginDto.getPassword();
 		log.info("finding user data in DB of this user : "+loginDto);
@@ -46,7 +47,11 @@ public class BookStoreService implements IBookStoreService {
 			log.info("User found in DB with above details, matching password");
 			if (encoder.matches(password, user.getPassword())) {
 				log.info("password matched");
-				return user;
+				String tokenForLogin = jwt.generateTokenForLogin(emailId);
+				TokenDto tokenDto = new TokenDto();
+				tokenDto.setToken(tokenForLogin);
+				tokenDto.setPersonName(user.getFullName());
+				return tokenDto;
 			} else {
 				log.error("Password Not Matched");
 				throw new BookStoreException("Wrong Password");

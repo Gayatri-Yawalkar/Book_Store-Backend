@@ -2,6 +2,7 @@ package com.bridgelabz.bookstore.utilis;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,17 @@ public class JwtUtil {
 		.compact();
 		
 		//.setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10)))
+	}
+	
+	//Generating token when user login and this will expires in 24 Hours.
+	public String generateTokenForLogin(String email) {
+		return Jwts.builder()
+				.setSubject(email)
+				.setIssuer("Amit")
+				.setIssuedAt(new Date(System.currentTimeMillis()))
+				.signWith(SignatureAlgorithm.HS256, Base64.getEncoder().encode(key.getBytes()))
+				.setExpiration(new Date( System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24)))
+				.compact();
 	}
 	
 	public Claims getClaims(String token, String key) {

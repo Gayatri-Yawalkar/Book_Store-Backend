@@ -12,6 +12,7 @@ import com.bridgelabz.bookstore.converter.Converter;
 import com.bridgelabz.bookstore.dto.ForgotPasswordDto;
 import com.bridgelabz.bookstore.dto.LoginDto;
 import com.bridgelabz.bookstore.dto.ResetPasswordDto;
+import com.bridgelabz.bookstore.dto.TokenDto;
 import com.bridgelabz.bookstore.dto.UserDto;
 import com.bridgelabz.bookstore.dto.UserResponseDto;
 import com.bridgelabz.bookstore.model.User;
@@ -32,12 +33,11 @@ public class BookStoreController {
 	private Converter converter;
 
 	@PostMapping("/login")
-	public UserResponseDto checkLoginCredentials(@RequestBody LoginDto loginDto) {
+	public TokenDto checkLoginCredentials(@RequestBody LoginDto loginDto) {
 		log.info("calling service layer method : checkEmailIdAndPasswordForLogin() with argument"+loginDto);
-		User user = bookStoreService.checkEmailIdAndPasswordForLogin(loginDto);
-		UserResponseDto respDto = converter.convertUserToRespDto(user);
-		log.info("credential checking done for the user and response is "+respDto);
-		return respDto;
+		TokenDto tokenDto = bookStoreService.checkEmailIdAndPasswordForLogin(loginDto);
+		log.info("credential checking done for the user and sent the token in response.");
+		return tokenDto;
 		
 	}
 
