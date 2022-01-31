@@ -7,7 +7,7 @@ import com.bridgelabz.bookstore.dto.UserDto;
 import com.bridgelabz.bookstore.exception.BookStoreException;
 import com.bridgelabz.bookstore.model.User;
 
-public interface IBookStoreService {
+public interface IUserService {
 
 	TokenDto checkEmailIdAndPasswordForLogin(LoginDto loginDto);
 

@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class BookStoreService implements IBookStoreService {
+public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	private UserRepository userRepository;
