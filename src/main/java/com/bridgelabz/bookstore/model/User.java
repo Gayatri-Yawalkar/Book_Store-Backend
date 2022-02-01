@@ -49,4 +49,8 @@ public class User {
 	@JsonManagedReference
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
 	private Cart cart;
+	
+	@JsonManagedReference
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+	private Wishlist wishlist;
 }
