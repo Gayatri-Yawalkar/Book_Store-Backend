@@ -15,10 +15,10 @@ public class JwtUtil {
 
 	String key = "Secret-key";
 	
-	public String generateToken(String id, String subject) {
+	public String generateToken(int id, String subject) {
 	
 		return Jwts.builder()
-		.setId(id)
+		.setId(String.valueOf(id))
 		.setSubject(subject)
 		.setIssuer("Amit")
 		.setIssuedAt(new Date(System.currentTimeMillis()))

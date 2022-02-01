@@ -16,7 +16,7 @@ import com.bridgelabz.bookstore.dto.TokenDto;
 import com.bridgelabz.bookstore.dto.UserDto;
 import com.bridgelabz.bookstore.dto.UserResponseDto;
 import com.bridgelabz.bookstore.model.User;
-import com.bridgelabz.bookstore.service.BookStoreService;
+import com.bridgelabz.bookstore.service.UserServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 	
 	@Autowired
-	private BookStoreService bookStoreService;
+	private UserServiceImpl bookStoreService;
 	
 	@Autowired
 	private Converter converter;
