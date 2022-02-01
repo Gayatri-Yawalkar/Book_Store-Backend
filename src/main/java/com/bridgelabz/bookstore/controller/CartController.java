@@ -30,6 +30,11 @@ public class CartController {
 		Cart addProductToCart = cartService.addProductToCart(token, bookId, cartDto);
 		return addProductToCart;
 	}
+	@PostMapping("/deleteFromController/{token}/{bookId}")
+	public Cart deleteFromController(@PathVariable String token, @PathVariable int bookId, @RequestBody CartDto cartDto) {
+		Cart deleteFromController = cartService.deleteFromController(token, bookId, cartDto);
+		return deleteFromController;
+	}
 
 	@GetMapping("get-cart-product/{token}")
 	public CartResponse getCartProduct(@PathVariable String token) {
@@ -39,4 +44,4 @@ public class CartController {
 		response.setCartQuantity(books.size());
 		return response;
 	}
-}
+

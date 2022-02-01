@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.bridgelabz.bookstore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -107,6 +108,36 @@ public class CartServiceImpl implements ICartService {
 		} else {
 			throw new BookStoreException("User not found.");
 		}
+		@Override
+		public void deleteFromCart(int bookId) {
+			cartRepo.deleteById(bookId);
+		}
+
+		@Override
+		public Cart updateQuantity(String token, int bookId, CartDto cartDto)) {
+			int id = Math.toIntExact(tokenUtil.decodeToken(token));
+			Optional<User> isPresent = UserRepository.findById(id);
+			if(isPresent.isPresent()){
+				Cart cart = CartRepository.getById(cartId);
+				cart.setQuantity(cartdto.quantity);
+//            BookDetails book =bookService.getBookByIdToken(token,cartdto.bookId);
+//            cart.setBook(book);
+				return CartRepository.save(cart);
+			}
+			return  null;
+		}
+
+		@Override
+		public List<Cart> findAllInCart(String token) {
+			int id = Math.toIntExact(tokenUtil.decodeToken(token));
+			Optional<User> isPresent = UserRepository.findById(id);
+			if(isPresent.isPresent()){
+				List<Cart> cartItems = cartRepo.findAllCartsByUserId(id);
+				return  cartItems;
+			}
+			return null;
+		}
+	}
 
 	}
 
