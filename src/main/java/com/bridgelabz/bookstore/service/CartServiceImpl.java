@@ -48,16 +48,16 @@ public class CartServiceImpl implements ICartService {
 					List<Books> books = cartByUserId.getBooks();
 
 					if (books.contains(bookById)) {
-						List<Books> matchedBook = books.stream().filter(book->book.getBookId()==bookById.getBookId()).collect(Collectors.toList());
+						List<Books> matchedBook = books.stream()
+								.filter(book -> book.getBookId() == bookById.getBookId()).collect(Collectors.toList());
 						Books inCartBook = matchedBook.get(0);
-						inCartBook.setInCartQuantity(inCartBook.getInCartQuantity()+1);
-						cartByUserId.setWholeCartQuantity(cartByUserId.getWholeCartQuantity()+1);
+						inCartBook.setInCartQuantity(inCartBook.getInCartQuantity() + 1);
+						cartByUserId.setWholeCartQuantity(cartByUserId.getWholeCartQuantity() + 1);
 					} else {
 						bookById.setInCartQuantity(1);
 						books.add(bookById);
-						cartByUserId.setWholeCartQuantity(cartByUserId.getWholeCartQuantity()+1);
+						cartByUserId.setWholeCartQuantity(cartByUserId.getWholeCartQuantity() + 1);
 					}
-
 					userByEmail.setCart(cartByUserId);
 
 					Cart updatedCart = cartRepo.save(cartByUserId);
@@ -79,13 +79,33 @@ public class CartServiceImpl implements ICartService {
 					Cart save = cartRepo.save(cart);
 					return save;
 				}
-
 			} else {
 				throw new BookStoreException("Book Not Found ");
 			}
-
 		} else {
 			throw new BookStoreException("User not valid ");
+		}
+	}
+
+	public List<Books> showProductsInCarts(String token) {
+		String email = jwt.getEmailFromToken(token);
+
+		User user = userService.getUserByEmailId(email);
+
+		if (user != null) {
+
+			Cart cart = cartRepo.findByUserId(user.getUserId());
+
+			if (cart != null) {
+				List<Books> books = cart.getBooks();
+				return books;
+			} else {
+//				throw new BookStoreException("Your Cart is Empty");
+				List<Books> newBooks = new ArrayList<>();
+				return newBooks;
+			}
+		} else {
+			throw new BookStoreException("User not found.");
 		}
 
 	}
