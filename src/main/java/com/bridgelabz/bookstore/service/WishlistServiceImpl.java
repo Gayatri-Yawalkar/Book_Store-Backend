@@ -31,6 +31,37 @@ public class WishlistServiceImpl implements IWishlistService{
 		Wishlist wishlist=getWishList(user,book);
 		return wishlist;
 	}
+	
+	public List<Books> showItemsInWishlist(String token) {
+		User user=getUserFromToken(token);
+		Wishlist wishlist=wishlistRepository.findByUserId(user.getUserId());
+		if (wishlist != null) {
+			List<Books> books = wishlist.getBooks();
+			return books;
+		} else {
+			List<Books> newBooks = new ArrayList<>();
+			return newBooks;
+		}
+	}
+	
+	public List<Books> removeItemFromWishlist(String token,int bookId) {
+		User user=getUserFromToken(token);
+		Books book=getBook(bookId);
+		Wishlist wishlist=wishlistRepository.findByUserId(user.getUserId());
+		if(wishlist!=null) {
+			List<Books> bookList=wishlist.getBooks();
+			bookList.remove(book);
+			wishlist.setWholeWishlistQuantity(wishlist.getWholeWishlistQuantity()-1);
+			wishlist.setBooks(bookList);
+			user.setWishlist(wishlist);
+			Wishlist updatedWishlist=wishlistRepository.save(wishlist);
+			return updatedWishlist.getBooks();
+		} else {
+			List<Books> newBooks = new ArrayList<>();
+			return newBooks;
+		}
+	}
+	
 	public User getUserFromToken(String token) {
 		String emailFromToken = jwt.getEmailFromToken(token);
 		User user = userService.getUserByEmailId(emailFromToken);

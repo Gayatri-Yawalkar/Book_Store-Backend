@@ -31,7 +31,7 @@ public class CartController {
 		return addProductToCart;
 	}
 
-	@GetMapping("get-cart-product/{token}")
+	@GetMapping("/get-cart-product/{token}")
 	public CartResponse getCartProduct(@PathVariable String token) {
 		List<Books> books = cartService.showProductsInCarts(token);
 		CartResponse response = new CartResponse();
