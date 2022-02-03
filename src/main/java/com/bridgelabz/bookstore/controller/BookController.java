@@ -1,19 +1,16 @@
 package com.bridgelabz.bookstore.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.bridgelabz.bookstore.converter.Converter;
 import com.bridgelabz.bookstore.dto.BooksDto;
 import com.bridgelabz.bookstore.model.Books;
 import com.bridgelabz.bookstore.service.BookService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @RestController

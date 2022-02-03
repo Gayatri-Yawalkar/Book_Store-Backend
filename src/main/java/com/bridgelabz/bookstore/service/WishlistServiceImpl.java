@@ -31,7 +31,7 @@ public class WishlistServiceImpl implements IWishlistService{
 		Wishlist wishlist=getWishList(user,book);
 		return wishlist;
 	}
-	
+	@Override
 	public List<Books> showItemsInWishlist(String token) {
 		User user=getUserFromToken(token);
 		Wishlist wishlist=wishlistRepository.findByUserId(user.getUserId());
@@ -43,19 +43,24 @@ public class WishlistServiceImpl implements IWishlistService{
 			return newBooks;
 		}
 	}
-	
+	@Override
 	public List<Books> removeItemFromWishlist(String token,int bookId) {
 		User user=getUserFromToken(token);
 		Books book=getBook(bookId);
 		Wishlist wishlist=wishlistRepository.findByUserId(user.getUserId());
 		if(wishlist!=null) {
 			List<Books> bookList=wishlist.getBooks();
-			bookList.remove(book);
-			wishlist.setWholeWishlistQuantity(wishlist.getWholeWishlistQuantity()-1);
-			wishlist.setBooks(bookList);
-			user.setWishlist(wishlist);
-			Wishlist updatedWishlist=wishlistRepository.save(wishlist);
-			return updatedWishlist.getBooks();
+			if(bookList.contains(book)) {
+				bookList.remove(book);
+//				wishlist.setWholeWishlistQuantity(wishlist.getWholeWishlistQuantity()-1);
+				wishlist.setBooks(bookList);
+				user.setWishlist(wishlist);
+				Wishlist updatedWishlist=wishlistRepository.save(wishlist);
+				return updatedWishlist.getBooks();
+			} else {
+				throw new BookStoreException("Book is not present in wishlist");
+			}
+			
 		} else {
 			List<Books> newBooks = new ArrayList<>();
 			return newBooks;

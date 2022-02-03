@@ -2,6 +2,7 @@ package com.bridgelabz.bookstore.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,6 +56,7 @@ public class UserController {
 		User userByEmailId = bookStoreService.getUserByEmailId(passwordDto.getEmailId());
 		return bookStoreService.forgotPassword(userByEmailId);
 	}
+	
 	@PostMapping("/resetpassword/{token}")
 	public UserResponseDto resetPassword(@RequestBody ResetPasswordDto resetPasswordDto,
 			@PathVariable("token") String token) {
@@ -62,5 +64,13 @@ public class UserController {
 		User user = bookStoreService.resetUserPassword(resetPasswordDto, token);
 		UserResponseDto respDto = converter.convertUserToRespDto(user);
 		return respDto;
+	}
+	
+	@GetMapping("/getuserprofile/{token}")
+	public UserResponseDto getUserProfile(@PathVariable("token") String token) {
+		
+		UserResponseDto userResponseDto=bookStoreService.getUserProfileData(token);
+		return userResponseDto;
+		
 	}
 }

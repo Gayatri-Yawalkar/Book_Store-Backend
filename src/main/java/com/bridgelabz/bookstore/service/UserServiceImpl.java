@@ -11,6 +11,7 @@ import com.bridgelabz.bookstore.dto.LoginDto;
 import com.bridgelabz.bookstore.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.dto.TokenDto;
 import com.bridgelabz.bookstore.dto.UserDto;
+import com.bridgelabz.bookstore.dto.UserResponseDto;
 import com.bridgelabz.bookstore.exception.BookStoreException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repository.UserRepository;
@@ -120,6 +121,19 @@ public class UserServiceImpl implements IUserService {
 			return user;
 		}
 		return null;
+	}
+	
+	public UserResponseDto getUserProfileData(String token) {
+		String email = jwt.getEmailFromToken(token);
+		User user = userRepository.findByEmailId(email);
+		if(user!=null) {
+			UserResponseDto userResponseDto=converter.convertUserToRespDto(user);
+			return userResponseDto;
+		} else {
+			throw new BookStoreException("Unauthorized user");
+		}
+		
+		
 	}
 
 }
