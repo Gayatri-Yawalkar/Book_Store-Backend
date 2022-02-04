@@ -32,7 +32,4 @@ public class Cart {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Books> books = new ArrayList<>();
-
-	@Column(name = "quantity_in_cart")
-	private Integer wholeCartQuantity = 0;
 }

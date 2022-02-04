@@ -118,8 +118,9 @@ public class UserServiceImpl implements IUserService {
 		User user = userRepository.findByEmailId(emailId);
 		if (user != null) {
 			return user;
+		} else {
+			throw new BookStoreException("User not found with email Id : "+emailId);
 		}
-		return null;
 	}
 
 }

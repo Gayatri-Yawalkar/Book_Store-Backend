@@ -29,7 +29,7 @@ public class BookController {
 
 	@GetMapping("/getbook/{bookId}")
 	public BooksDto getOneBook(@PathVariable int bookId) {
-		Books getOneBook = bookService.displaySingleBook(bookId);
+		Books getOneBook = bookService.getSingleBook(bookId);
 		BooksDto respDto = converter.convertBooksToBooksDto(getOneBook);
 		log.info("Retrive single book by Id " + respDto);
 		return respDto;

@@ -7,7 +7,7 @@ import com.bridgelabz.bookstore.model.Books;
 public interface IBookService {
 
 	
-	public Books displaySingleBook(int bookId);
+	public Books getSingleBook(int bookId);
 	
 	public List<Books> getAllBooks();
 }

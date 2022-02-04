@@ -18,7 +18,7 @@ public class BookService implements IBookService {
 	private BookRepository bookRepository;
 
 	@Override
-	public Books displaySingleBook(int bookId) {
+	public Books getSingleBook(int bookId) {
 		log.info("Finding book with book Id : " + bookId);
 		return bookRepository.findById(bookId)
 				.orElseThrow(() -> new BookStoreException("Book Not Found wih Book Id : " + bookId));

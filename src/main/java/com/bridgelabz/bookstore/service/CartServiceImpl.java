@@ -2,7 +2,7 @@ package com.bridgelabz.bookstore.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,54 +36,48 @@ public class CartServiceImpl implements ICartService {
 		String emailFromToken = jwt.getEmailFromToken(token);
 
 		User userByEmail = userService.getUserByEmailId(emailFromToken);
-		if (userByEmail != null) {
 
-			Books bookById = bookService.displaySingleBook(bookId);
+		Books bookById = bookService.getSingleBook(bookId);
 
-			if (bookById != null) {
+		if (bookById != null) {
 
-				Cart cartByUserId = cartRepo.findByUserId(userByEmail.getUserId());
+			Cart cartByUserId = cartRepo.findByUserId(userByEmail.getUserId());
 
-				if (cartByUserId != null) {
-					List<Books> books = cartByUserId.getBooks();
+			if (cartByUserId != null) {
+				List<Books> books = cartByUserId.getBooks();
 
-					if (books.contains(bookById)) {
-						List<Books> matchedBook = books.stream()
-								.filter(book -> book.getBookId() == bookById.getBookId()).collect(Collectors.toList());
-						Books inCartBook = matchedBook.get(0);
-						inCartBook.setInCartQuantity(inCartBook.getInCartQuantity() + 1);
-						cartByUserId.setWholeCartQuantity(cartByUserId.getWholeCartQuantity() + 1);
-					} else {
-						bookById.setInCartQuantity(1);
-						books.add(bookById);
-						cartByUserId.setWholeCartQuantity(cartByUserId.getWholeCartQuantity() + 1);
-					}
-					userByEmail.setCart(cartByUserId);
+				Optional<Books> matchedBook = books.stream().filter(book -> book.getBookId() == bookById.getBookId())
+						.findFirst();
 
-					Cart updatedCart = cartRepo.save(cartByUserId);
-
-					return updatedCart;
-
+				if (matchedBook.isPresent()) {
+					Books inCartBook = matchedBook.get();
+					inCartBook.setInCartQuantity(inCartBook.getInCartQuantity() + 1);
 				} else {
-					List<Books> bookList = new ArrayList<>();
 					bookById.setInCartQuantity(1);
-					bookList.add(bookById);
-
-					Cart cart = new Cart();
-					cart.setWholeCartQuantity(1);
-					cart.setBooks(bookList);
-					cart.setUser(userByEmail);
-
-					userByEmail.setCart(cart);
-
-					Cart save = cartRepo.save(cart);
-					return save;
+					books.add(bookById);
 				}
+				userByEmail.setCart(cartByUserId);
+
+				Cart updatedCart = cartRepo.save(cartByUserId);
+
+				return updatedCart;
+
 			} else {
-				throw new BookStoreException("Book Not Found ");
+				List<Books> bookList = new ArrayList<>();
+				bookById.setInCartQuantity(1);
+				bookList.add(bookById);
+
+				Cart cart = new Cart();
+				cart.setBooks(bookList);
+				cart.setUser(userByEmail);
+
+				userByEmail.setCart(cart);
+
+				Cart save = cartRepo.save(cart);
+				return save;
 			}
 		} else {
-			throw new BookStoreException("User not valid ");
+			throw new BookStoreException("Book Not Found ");
 		}
 	}
 
@@ -100,14 +94,70 @@ public class CartServiceImpl implements ICartService {
 				List<Books> books = cart.getBooks();
 				return books;
 			} else {
-//				throw new BookStoreException("Your Cart is Empty");
+				// throw new BookStoreException("Your Cart is Empty");
 				List<Books> newBooks = new ArrayList<>();
 				return newBooks;
 			}
 		} else {
 			throw new BookStoreException("User not found.");
 		}
+	}
 
+	public List<Books> removeBook(String token, int bookId) {
+		String email = jwt.getEmailFromToken(token);
+
+		User user = userService.getUserByEmailId(email);
+
+		Cart cart = cartRepo.findByUserId(user.getUserId());
+
+		if (cart != null) {
+			List<Books> books = cart.getBooks();
+
+			Books book = bookService.getSingleBook(bookId);
+
+			if (books.contains(book)) {
+				books.remove(book);
+				cart.setBooks(books);
+				cartRepo.save(cart);
+				return books;
+			} else {
+				throw new BookStoreException("Book is not present in the cart");
+			}
+
+		} else {
+			List<Books> books = new ArrayList<>();
+			return books;
+		}
+	}
+
+	public List<Books> decreaseOneQuantity(String token, int bookId) {
+
+		String email = jwt.getEmailFromToken(token);
+		User user = userService.getUserByEmailId(email);
+
+		Cart cart = cartRepo.findByUserId(user.getUserId());
+
+		if (cart != null) {
+			Books book = bookService.getSingleBook(bookId);
+
+			List<Books> books = cart.getBooks();
+
+			Optional<Books> matchedBook = books.stream().filter(b -> b.getBookId() == book.getBookId()).findFirst();
+
+			if (matchedBook.isPresent()) {
+				Books inCartBook = matchedBook.get();
+				inCartBook.setInCartQuantity(inCartBook.getInCartQuantity() - 1);
+				cart.setBooks(books);
+				cartRepo.save(cart);
+				return books;
+
+			} else {
+				throw new BookStoreException("Book is not present in your Cart");
+			}
+
+		} else {
+			throw new BookStoreException("Cart is already empty");
+		}
 	}
 
 }
