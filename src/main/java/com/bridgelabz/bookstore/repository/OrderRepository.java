@@ -9,8 +9,9 @@ import org.springframework.stereotype.Repository;
 import com.bridgelabz.bookstore.model.Order;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order,Integer>{
+public interface OrderRepository extends JpaRepository<Order, Integer>{
 
 	@Query(value = "select * from user_orders where user_id =:userId", nativeQuery = true)
 	List<Order> getAllOrder(int userId);
+
 }
