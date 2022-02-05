@@ -39,7 +39,7 @@ public class CartController {
 		response.setCartQuantity(books.size());
 		return response;
 	}
-	
+
 	@PostMapping("/remove-book/{token}/{bookId}")
 	public CartResponse removeBookFromCart(@PathVariable String token, @PathVariable int bookId) {
 		List<Books> books = cartService.removeBook(token, bookId);
@@ -48,9 +48,10 @@ public class CartController {
 		response.setCartQuantity(books.size());
 		return response;
 	}
-	
+
 	@PostMapping("/decrease-quantity/{token}/{bookId}")
-	public CartResponse decreaseOneQuantity(@PathVariable String token, @PathVariable int bookId, @RequestBody CartDto cartDto) {
+	public CartResponse decreaseOneQuantity(@PathVariable String token, @PathVariable int bookId,
+			@RequestBody CartDto cartDto) {
 		List<Books> books = cartService.decreaseOneQuantity(token, bookId);
 		CartResponse cartResponse = new CartResponse();
 		cartResponse.setBooks(books);

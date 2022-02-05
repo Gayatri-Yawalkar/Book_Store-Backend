@@ -14,18 +14,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
-@Data
 @Entity
-public class Cart {
-
+@Data
+public class Wishlist {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-
+	@Column(name="wishlist_id")
+	private Integer wishlistId;
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	@JsonBackReference
@@ -33,8 +32,9 @@ public class Cart {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Books> books = new ArrayList<>();
+
+	@Column(name = "quantity_in_wishlist")
+	private Integer wholeWishlistQuantity = 0;
+
 	
-	@JsonBackReference
-	@OneToMany(mappedBy = "cart")
-	private List<Order> order;
 }

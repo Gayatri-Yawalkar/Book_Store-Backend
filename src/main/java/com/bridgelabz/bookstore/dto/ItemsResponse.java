@@ -7,8 +7,8 @@ import com.bridgelabz.bookstore.model.Books;
 import lombok.Data;
 
 @Data
-public class CartResponse {
+public class ItemsResponse {
 
+	private Integer itemsQuantity;
 	private List<Books> books;
-	private int CartQuantity;
 }

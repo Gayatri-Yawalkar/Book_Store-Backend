@@ -35,4 +35,9 @@ public class BookService implements IBookService {
 		log.info("Found Books");
 		return allBooks;
 	}
+	
+	public List<Books> updateBooksQuantity(List<Books> books){
+		List<Books> savedBooks = bookRepository.saveAll(books);
+		return savedBooks;
+	}
 }
