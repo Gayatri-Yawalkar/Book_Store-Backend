@@ -38,5 +38,26 @@ public class BookController {
 		List<BooksDto> booksDtoList = converter.convertBooksListToBooksDtoList(allBooks);
 		return booksDtoList;
 	}
+	
+	@GetMapping("/get-books/{pageNo}")
+	public List<BooksDto> getAllBooks(@PathVariable int pageNo) {
+		List<Books> allBooks = bookService.getAllBooks(pageNo);
+		List<BooksDto> booksDtoList = converter.convertBooksListToBooksDtoList(allBooks);
+		return booksDtoList;
+	}
+	
+	@GetMapping("/get-sorted-books/{pageNo}")
+	public List<BooksDto> getSortedBooks(@PathVariable int pageNo) {
+		List<Books> allBooks = bookService.getSortedByPriceBooks(pageNo);
+		List<BooksDto> booksDtoList = converter.convertBooksListToBooksDtoList(allBooks);
+		return booksDtoList;
+	}
+	
+	@GetMapping("/get-desc-sorted-books/{pageNo}")
+	public List<BooksDto> getDescSortedBooks(@PathVariable int pageNo) {
+		List<Books> allBooks = bookService.getSortedByPriceBooksDesc(pageNo);
+		List<BooksDto> booksDtoList = converter.convertBooksListToBooksDtoList(allBooks);
+		return booksDtoList;
+	}
 
 }
